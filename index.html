@@ -1,12 +1,568 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="refresh" content="0; url=valentine.html">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Redirecting…</title>
-  </head>
-  <body>
-    <p>If you are not redirected automatically, <a href="valentine.html">click here to open the site</a>.</p>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Forever Valentine ❤️</title>
+    <style>
+        :root {
+            --pink-bg: #FFF5F7;
+            --btn-bg: #ffb3c1;
+            --btn-text: #590d22;
+            --btn-hover: #ff4d6d;
+            --accent: #d63384;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--pink-bg);
+            background-image: url("https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExZXo2ajRua2R6aWt4bjlkY3QwMDhoaTNncnNwYzYyNjYybDVlMXNsZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/GSLbyMH6Afqn1lc4cb/giphy.gif");
+            background-repeat: repeat;
+            background-size: 280px;
+            background-attachment: fixed;
+            color: var(--btn-text);
+            overflow-x: hidden;
+        }
+
+        /* White readability overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.78);
+            z-index: 1;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .page { display: none; animation: fadeIn 0.6s ease-out forwards; }
+        .active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 { font-size: 3rem; color: var(--accent); margin-bottom: 10px; }
+        h3 { font-size: 1.5rem; line-height: 1.4; }
+        p { font-size: 1.1rem; }
+
+        .main-gif {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 20px;
+            margin: 20px 0;
+        }
+
+        /* Quiz Styling */
+        .quiz-container { text-align: left; margin: 30px 0; }
+        .question { font-size: 1.5rem; font-weight: bold; color: var(--accent); margin-top: 25px; }
+        .options-group { margin: 10px 0; display: flex; flex-direction: column; gap: 8px; }
+        .option-label {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 15px;
+            border: 2px solid var(--btn-bg);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .option-label:hover { background: #fff0f3; }
+        input[type="radio"] { display: none; }
+        input[type="radio"]:checked + .option-label {
+            background-color: var(--btn-hover);
+            color: white;
+            border-color: var(--btn-hover);
+        }
+
+        /* Button UI */
+        .btn-container { display: flex; justify-content: space-between; margin-top: 40px; min-height: 60px; }
+        .btn {
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            border: 2px solid var(--btn-hover);
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover { background-color: var(--btn-hover); color: white; }
+
+        /* Moving No Button */
+        #noBtn { position: absolute; transition: 0.1s ease; z-index: 10; width: 100px; height: 50px; padding: 0; }
+
+        .reasons-list { text-align: left; display: inline-block; font-size: 1.4rem; }
+
+        .hidden { display: none; }
+
+        /* Result Messages */
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: none;
+        }
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: none;
+        }
+        .result-gif {
+            display: none;
+            margin: 20px 0;
+            border-radius: 20px;
+        }
+
+        /* Floating Hearts */
+        .heart {
+            position: fixed;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 0;
+            animation: float-up 4s ease-in infinite;
+        }
+        @keyframes float-up {
+            0% { transform: translateY(0) translateX(0); opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+        }
+
+        /* Music Control Button */
+        #musicToggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            border: 2px solid var(--btn-hover);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+        #musicToggle:hover {
+            background-color: var(--btn-hover);
+            color: white;
+        }
+
+        /* Romantic Quote */
+        .romantic-quote {
+            font-style: italic;
+            color: #d63384;
+            font-size: 1rem;
+            margin: 20px 0;
+            opacity: 0;
+            animation: fadeInQuote 0.8s ease-in-out forwards;
+        }
+        @keyframes fadeInQuote {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        /* No Button Modal */
+        .no-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .no-modal.active {
+            display: flex;
+        }
+        .no-modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            max-width: 500px;
+            z-index: 1001;
+        }
+        .no-modal-content h2 {
+            color: #d63384;
+            font-size: 2rem;
+            margin: 20px 0;
+        }
+        .no-modal-content p {
+            color: #590d22;
+            font-size: 1.1rem;
+            margin: 15px 0;
+        }
+        .no-modal-content img {
+            width: 300px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        .no-modal-content .btn {
+            margin-top: 20px;
+            margin-right: 10px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+<div id="player"></div>
+<button id="musicToggle" title="Toggle Music">🔊</button>
+
+<div class="content-wrapper">
+
+    <div id="page1" class="page active">
+        <p class="romantic-quote">"Love is not just looking at each other, it's looking in the same direction."</p>
+        <h1>Hey, You!! ❤️</h1>
+        <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExOGg2bm16MWd0OGE0aXlyeW5zZDhtbTVkdHpyZHpkeDhwaGlycTM1bSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/0OgdJVNjbcIifqSb7U/giphy.gif" class="main-gif">
+        <h3>I made something small for you… just a tiny journey through us 💕</h3>
+        <p>No pressure. Just click through slowly… and smile while you do 😌</p>
+        <div class="btn-container" style="justify-content: flex-end;">
+            <button class="btn" onclick="startExperience()">Click me!</button>
+        </div>
+    </div>
+
+    <div id="page2" class="page">
+        <p class="romantic-quote">"Do you remember the little moments that made my heart skip a beat?"</p>
+        <h1>The Love Quiz 💘</h1>
+        <p>Before I ask you the real question… I want to see something 😏<br>How well do you remember our little moments?</p>
+        <div style="height:380px; overflow:hidden; border-radius:20px;">
+            <iframe src="https://tenor.com/embed/18378927" width="100%" height="420" frameborder="0" style="border-radius:20px; margin-top:-50px;"></iframe>
+        </div>
+        <p>Don't worry… even wrong answers are adorable.</p>
+
+        <div class="quiz-container">
+            <div class="question">Q1: What did we first cook together?</div>
+            <div class="options-group">
+                <input type="radio" name="q1" id="q1b" value="Maggi"><label class="option-label" for="q1b">Maggi</label>
+                <input type="radio" name="q1" id="q1c" value="Tea"><label class="option-label" for="q1c">Tea</label>
+                <input type="radio" name="q1" id="q1a" value="Pasta"><label class="option-label" for="q1a">Pasta</label>
+                <input type="radio" name="q1" id="q1d" value="Sandwich"><label class="option-label" for="q1d">Sandwich</label>
+            </div>
+
+            <div class="question">Q2: What movie we watched together on our second date?</div>
+            <div class="options-group">
+                <input type="radio" name="q2" id="q2a" value="Jab we Met"><label class="option-label" for="q2a">Jab we Met</label>
+                <input type="radio" name="q2" id="q2b" value="The Holiday"><label class="option-label" for="q2b">The Holiday</label>
+                <input type="radio" name="q2" id="q2c" value="Sita Ramam"><label class="option-label" for="q2c">Sita Ramam</label>
+                <input type="radio" name="q2" id="q2d" value="Band Baja Barat"><label class="option-label" for="q2d">Band Baja Barat</label>
+            </div>
+
+            <div class="question">Q3: Where did we take this photo?</div>
+            <img src="pic1.jpg" style="width:100%; border-radius:15px; margin:10px 0;">
+            <div class="options-group">
+                <input type="radio" name="q3" id="q3b" value="Goa"><label class="option-label" for="q3b">Goa</label>
+                <input type="radio" name="q3" id="q3c" value="Praslin"><label class="option-label" for="q3c">Praslin</label>
+                <input type="radio" name="q3" id="q3d" value="Chikkamagaluru"><label class="option-label" for="q3d">Chikkamagaluru</label>
+                <input type="radio" name="q3" id="q3a" value="Mahe"><label class="option-label" for="q3a">Mahe</label>
+            </div>
+
+            <div class="question">Q4: Who said I love you first?</div>
+            <div class="options-group">
+                <input type="radio" name="q4" id="q4a" value="Nitz! 😘"><label class="option-label" for="q4a">Nitz! 😘</label>
+                <input type="radio" name="q4" id="q4b" value="Aru! 😌"><label class="option-label" for="q4b">Aru! 😌</label>
+                <input type="radio" name="q4" id="q4c" value="We said it together! 🥰"><label class="option-label" for="q4c">We said it together! 🥰</label>
+                <input type="radio" name="q4" id="q4d" value="Neither of us remember 😂"><label class="option-label" for="q4d">Neither of us remember 😂</label>
+            </div>
+        </div>
+
+        <div id="quiz-success" class="success-message">Perfect score! You remember everything! 🎉</div>
+        <div id="quiz-error" class="error-message">Oops! Some answers need another try! 😅</div>
+
+        <div id="result-gif-container" style="display: none;">
+            <img id="result-gif" class="result-gif" src="" alt="result">
+        </div>
+        
+        <div id="quiz-buttons" class="btn-container">
+            <button class="btn" onclick="showPage(1)">Back</button>
+            <button class="btn" id="submit-btn" onclick="validateQuiz()">Submit</button>
+        </div>
+
+        <div id="quiz-next-buttons" class="btn-container" style="display: none;">
+            <button class="btn" onclick="showPage(1)">Back</button>
+            <button class="btn" id="next-btn" onclick="showPage(3)">Next</button>
+        </div>
+    </div>
+
+    <div id="page3" class="page">
+        <p class="romantic-quote">"You are my today and all of my tomorrows." 🌹</p>
+        <h1>Why I Love You ❤️</h1>
+        <p>Okay… quiz aside, this part is the easiest.<br>
+        <p>Because loving you has never taken any effort.</p>
+        
+        <iframe src="https://tenor.com/embed/6133114" width="300" height="300" frameborder="0"></iframe>
+        <p>These are just a few to name, the list is actually huge...</p>
+        <div style="margin-top:20px;">
+            <h3 class="reasons-list">
+                ❤️ You let me be 'me'<br>
+                ❤️ You remember the tiniest details<br>
+                ❤️ You are my safe space<br>
+                ❤️ You make me laugh<br>
+                ❤️ Your witty comebacks!<br>
+                ❤️ You are sexy!!
+            </h3>
+        </div>
+
+        <div class="btn-container">
+            <button class="btn" onclick="showPage(2)">Back</button>
+            <button class="btn" onclick="showPage(4)">Next</button>
+        </div>
+    </div>
+
+    <div id="page4" class="page">
+        <p class="romantic-quote">"This is the moment I've been waiting for..." ✨</p>
+        <h1>Last One!</h1>
+        <p>So after all the memories… after all the reasons…<br>I just have one last thing to ask.</p>
+        <p>And yes… this is the most important question of them all 😌</p>
+        <h2 style="font-size: 2rem; margin: 30px 0;">Will you be my Valentine? 🌹</h2>
+        <div style="height:300px; overflow:hidden; border-radius:20px; margin:20px 0;">
+            <iframe src="https://tenor.com/embed/21340252" width="100%" height="400" frameborder="0" style="margin-top:-50px;"></iframe>
+        </div>
+
+        <div id="button-box" style="position: relative; height: 150px; margin-top: 50px;">
+            <button class="btn" id="yesBtn" onclick="showPage(5)" style="position: absolute; left: 20%; width: auto;">YES!</button>
+            <button class="btn" id="noBtn" style="position: absolute; right: 20%;">No</button>
+        </div>
+
+        <!-- No Button Modal -->
+        <div id="noModal" class="no-modal">
+            <div class="no-modal-content">
+                <h2>Wrong answer! 😡</h2>
+                
+                <div class="tenor-gif-embed" data-postid="8417007939964092403" data-share-method="host" data-aspect-ratio="1.76596" data-width="100%"><a href="https://tenor.com/view/no-try-again-no-nope-try-again-denied-gif-8417007939964092403">No Try Again Nope GIF</a>from <a href="https://tenor.com/search/no+try+again-gifs">No Try Again GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+                <!-- <p>Try Again! 😏</p> -->
+                <button class="btn" onclick="closeNoModal()" style="margin-top: 20px;">Back to the Question</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="page5" class="page">
+            <h1>YAY! 🥰</h1>
+            <p>You made the right choice! 😎 </p> 
+            <p>Love you, my Valentine ❤️</p>
+            <div style="border-radius:20px; overflow:hidden; display:inline-block;">
+                <img src="gif1.gif" style="width:400px; margin-top:-200px;">
+            </div>
+            <p>Now close this tab, come give me a hug… and let's celebrate properly 😌</p>
+            <h3 style="margin-top: 30px;">🎁 Surprise</h3>
+            <p>Show me this page tonight.</p>
+            <p>Dinner + dessert is on me 😌</p>
+            <button class="btn" onclick="location.reload()">Start over?</button>
+        </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<script>
+    // YouTube API for Autoplay Music
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    var player;
+    var isMusicPlaying = true;
+    
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '0', width: '0', videoId: 'O-91jWrOxYk',
+            playerVars: { 
+                'autoplay': 1, 
+                'start': 40, 
+                'loop': 1, 
+                'playlist': 'O-91jWrOxYk',
+                'controls': 0,
+                'modestbranding': 1
+            },
+            events: { 
+                'onReady': function(e) { 
+                    e.target.mute();
+                    setTimeout(() => {
+                        e.target.unMute();
+                        e.target.setVolume(70);
+                        e.target.playVideo();
+                    }, 500);
+                } 
+            }
+        });
+    }
+
+    // Floating Hearts Animation
+    function createFloatingHeart() {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.textContent = '❤️';
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.bottom = '-50px';
+        heart.style.fontSize = (Math.random() * 1 + 1) + 'rem';
+        heart.style.opacity = Math.random() * 0.5 + 0.3;
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 4000);
+    }
+
+    // Start floating hearts
+    setInterval(createFloatingHeart, 800);
+
+    // Music Control Toggle
+    document.getElementById('musicToggle').addEventListener('click', function() {
+        if(player) {
+            if(isMusicPlaying) {
+                player.pauseVideo();
+                this.textContent = '🔇';
+            } else {
+                player.playVideo();
+                this.textContent = '🔊';
+            }
+            isMusicPlaying = !isMusicPlaying;
+        }
+    });
+
+    // Trigger Confetti on YES
+    function triggerConfetti() {
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+        });
+        // Repeat confetti bursts
+        setTimeout(() => {
+            confetti({
+                particleCount: 50,
+                spread: 100,
+                origin: { y: 0.5 }
+            });
+        }, 300);
+    }
+
+    function startExperience() {
+        player.unMute();
+        player.setVolume(70);
+        player.playVideo();
+        isMusicPlaying = true;
+        document.getElementById('musicToggle').textContent = '🔊';
+        showPage(2);
+    }
+
+    function showPage(num) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page' + num).classList.add('active');
+        window.scrollTo(0,0);
+    }
+
+    function validateQuiz() {
+        const q1 = document.querySelector('input[name="q1"]:checked')?.value;
+        const q2 = document.querySelector('input[name="q2"]:checked')?.value;
+        const q3 = document.querySelector('input[name="q3"]:checked')?.value;
+        const q4 = document.querySelector('input[name="q4"]:checked')?.value;
+
+        const allCorrect = q1 === "Pasta" && q2 === "Jab we Met" && q3 === "Mahe" && q4 === "Nitz! 😘";
+
+        const gifContainer = document.getElementById('result-gif-container');
+        
+        if(allCorrect) {
+            // Show success message and GIF
+            document.getElementById('quiz-success').style.display = 'block';
+            document.getElementById('quiz-error').style.display = 'none';
+            
+            // Clear previous content and add success GIF
+            gifContainer.innerHTML = `<img src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif" alt="success" style="width:100%; border-radius:20px; margin:20px 0; display:block;">`;
+            gifContainer.style.display = 'block';
+            
+            // Hide submit buttons and show next button
+            document.getElementById('quiz-buttons').style.display = 'none';
+            document.getElementById('quiz-next-buttons').style.display = 'flex';
+            
+        } else {
+            // Show error message and GIF
+            document.getElementById('quiz-error').style.display = 'block';
+            document.getElementById('quiz-success').style.display = 'none';
+            
+            // Clear previous content and add error GIF iframe
+            gifContainer.innerHTML = `<div style="height:380px; overflow:hidden; border-radius:20px; margin: 20px 0;"><iframe src="https://tenor.com/embed/27244248" width="100%" height="420" frameborder="0" style="border-radius:20px; margin-top:-40px;"></iframe></div>`;
+            gifContainer.style.display = 'block';
+            
+            // Keep submit button visible
+            document.getElementById('quiz-buttons').style.display = 'flex';
+            document.getElementById('quiz-next-buttons').style.display = 'none';
+        }
+
+        // Scroll to result container
+        setTimeout(() => {
+            gifContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 200);
+    }
+
+    // Moving 'No' Button Logic
+    document.addEventListener('DOMContentLoaded', function() {
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const buttonBox = document.getElementById('button-box');
+        
+        if(noBtn && buttonBox) {
+            noBtn.addEventListener('mouseover', () => {
+                const boxRect = buttonBox.getBoundingClientRect();
+                const maxX = boxRect.width - 100; // button width is 100px
+                const maxY = boxRect.height - 50;  // button height is 50px
+                
+                // Generate random position within the box bounds
+                const x = Math.random() * maxX;
+                const y = Math.random() * maxY;
+                
+                // Position relative to the container
+                noBtn.style.position = 'absolute';
+                noBtn.style.left = x + 'px';
+                noBtn.style.top = y + 'px';
+            });
+            
+            // If they somehow manage to click it
+            noBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showNoModal();
+            });
+        }
+        
+        if(yesBtn) {
+            yesBtn.addEventListener('click', function() {
+                triggerConfetti();
+            });
+        }
+    });
+
+    function showNoModal() {
+        document.getElementById('noModal').classList.add('active');
+    }
+
+    function closeNoModal() {
+        document.getElementById('noModal').classList.remove('active');
+    }
+</script>
+</body>
 </html>
